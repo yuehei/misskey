@@ -6,8 +6,9 @@
 import { watch, version as vueVersion } from 'vue';
 import { compareVersions } from 'compare-versions';
 import { version, lang, isSafeMode } from '@@/js/config.js';
-import defaultLightTheme from '@@/themes/l-light.json5';
-import defaultDarkTheme from '@@/themes/d-green-lime.json5';
+// [custom] Keep startup, settings, and syntax highlighting on the same defaults.
+import defaultLightTheme from '@@/themes/l-grape-candy.json5';
+import defaultDarkTheme from '@@/themes/d-grape-candy.json5';
 import { storeBootloaderErrors } from '@@/js/store-boot-errors';
 import type { App } from 'vue';
 import widgets from '@/widgets/index.js';

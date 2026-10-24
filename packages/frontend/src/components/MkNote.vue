@@ -49,7 +49,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
 		<MkAvatar :class="[$style.avatar, prefer.s.useStickyIcons ? $style.useSticky : null]" :user="appearNote.user" :link="!mock" :preview="!mock"/>
 		<div :class="$style.main">
-			<MkNoteHeader :note="appearNote" :mini="true"/>
+			<MkNoteHeader :note="appearNote" :mini="true" :class="{ [$style.noteHeader]: !showTicker }"/>
 			<MkInstanceTicker v-if="showTicker" :host="appearNote.user.host" :instance="appearNote.user.instance"/>
 			<div style="container-type: inline-size;">
 				<p v-if="appearNote.cw != null" :class="$style.cw">
@@ -77,6 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 							:enableEmojiMenu="true"
 							:enableEmojiMenuReaction="true"
 							class="_selectable"
+							:class="{ [$style.chineseBody]: usesChineseLineHeight(appearNote.text) }"
 						/>
 						<div v-if="translating || translation" :class="$style.translation">
 							<MkLoading v-if="translating" mini/>
@@ -204,6 +205,8 @@ import { prefer } from '@/preferences.js';
 import { i18n } from '@/i18n.js';
 import { userPage } from '@@/js/user.js';
 import { getNoteSummary } from '@/utility/get-note-summary.js';
+// [custom] Apply extra leading only to Chinese-dominant note prose.
+import { usesChineseLineHeight } from '@/utility/custom-note-typography.js';
 import { isEnabledUrlPreview } from '@/utility/url-preview.js';
 import { focusPrev, focusNext } from '@/utility/focus.js';
 import number from '@/filters/number.js';
@@ -412,6 +415,17 @@ const keymap = {
 
 	&:hover > .article > .main > .footer > .footerButton {
 		color: var(--MI_THEME-fg);
+
+		// [custom] The note-wide hover rule must not mask the active action's accent.
+		&:not(:disabled):focus-visible {
+			color: var(--MI_THEME-accent);
+		}
+
+		@media (hover: hover) {
+			&:not(:disabled):hover {
+				color: var(--MI_THEME-accent);
+			}
+		}
 	}
 
 	&.showActionsOnlyHover {
@@ -550,10 +564,16 @@ const keymap = {
 	}
 }
 
+// [custom] Without a server label, separate the author row from the content; otherwise the label supplies the gap.
+.noteHeader {
+	margin-bottom: 2px;
+}
+
 .article {
 	position: relative;
 	display: flex;
-	padding: 28px 32px;
+	// [custom] Reduce outer whitespace while keeping the original horizontal padding.
+	padding: 18px 32px;
 }
 
 .colorBar {
@@ -643,6 +663,11 @@ const keymap = {
 	overflow-wrap: break-word;
 }
 
+// [custom] Keep author metadata and non-Chinese prose at the upstream line height.
+.chineseBody {
+	line-height: 1.5;
+}
+
 .replyIcon {
 	color: var(--MI_THEME-accent);
 	margin-right: 0.5em;
@@ -680,6 +705,12 @@ const keymap = {
 }
 
 .footer {
+	// [custom] Sharkey-style compact action row, wrapping on small screens.
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	margin-top: 0.4em;
 	margin-bottom: -14px;
 }
 
@@ -689,11 +720,47 @@ const keymap = {
 	color: color-mix(in srgb, var(--MI_THEME-panel), var(--MI_THEME-fg) 70%); // opacityなど不透明度で表現するとレンダリングパフォーマンスに影響するので通常の色の混合で代用
 
 	&:not(:last-child) {
-		margin-right: 28px;
+		// [custom] Spacing is handled by the wrapping footer.
+		margin-right: 0;
 	}
 
-	&:hover {
-		color: var(--MI_THEME-fgHighlighted);
+	// [custom] Keep the circular highlight on the icon, even when a count is shown.
+	> i {
+		position: relative;
+		isolation: isolate;
+
+		&::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: calc(1.28em + 16px);
+			height: calc(1.28em + 16px);
+			border-radius: 50%;
+			transform: translate(-50%, -50%);
+			pointer-events: none;
+			z-index: -1;
+		}
+	}
+
+	// [custom] Replace the subtle upstream hover color; disabled actions stay neutral.
+	// &:hover { color: var(--MI_THEME-fgHighlighted); }
+	&:not(:disabled):focus-visible {
+		color: var(--MI_THEME-accent);
+
+		> i::after {
+			background: var(--MI_THEME-accentedBg);
+		}
+	}
+
+	@media (hover: hover) {
+		&:not(:disabled):hover {
+			color: var(--MI_THEME-accent);
+
+			> i::after {
+				background: var(--MI_THEME-accentedBg);
+			}
+		}
 	}
 }
 
@@ -712,7 +779,8 @@ const keymap = {
 	}
 
 	.article {
-		padding: 24px 26px;
+		// [custom] Keep tablet spacing consistent with the desktop timeline.
+		padding: 18px 26px;
 	}
 
 	.avatar {
@@ -731,7 +799,8 @@ const keymap = {
 	}
 
 	.article {
-		padding: 20px 22px;
+		// [custom] The <=480px mobile rule below retains its original 14px padding.
+		padding: 18px 22px;
 	}
 
 	.footer {
@@ -772,20 +841,18 @@ const keymap = {
 
 @container (max-width: 400px) {
 	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 18px;
-			}
+		// [custom] Keep compact action spacing on narrow cards.
+		.footer {
+			column-gap: 8px;
 		}
 	}
 }
 
 @container (max-width: 350px) {
 	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 12px;
-			}
+		// [custom] Avoid combining legacy button margins with the flex gap.
+		.footer {
+			column-gap: 4px;
 		}
 	}
 
@@ -803,13 +870,14 @@ const keymap = {
 		height: 44px;
 	}
 
-	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 8px;
-			}
-		}
-	}
+	// [custom] Keep the upstream rule for merge reference; gap already provides spacing.
+	// .root:not(.showActionsOnlyHover) {
+	// 	.footerButton {
+	// 		&:not(:last-child) {
+	// 			margin-right: 8px;
+	// 		}
+	// 	}
+	// }
 }
 
 @container (max-width: 250px) {

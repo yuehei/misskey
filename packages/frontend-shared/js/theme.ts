@@ -35,6 +35,17 @@ export const themeProps = Object.keys(lightTheme.props).filter(key => !key.start
 
 export const getBuiltinThemes = () => Promise.all(
 	[
+		// [custom] Add the fork's light/dark themes without renaming upstream themes.
+		'l-peach-soda',
+		'd-peach-soda',
+		'l-lime-pop',
+		'd-lime-pop',
+		'l-sky-club',
+		'd-sky-club',
+		'l-grape-candy',
+		'd-grape-candy',
+		'l-amber-radio',
+		'd-amber-radio',
 		'l-light',
 		'l-coffee',
 		'l-apricot',

@@ -102,13 +102,20 @@
 	}
 	//#endregion
 
+	// [custom] Initialize the font independently of browser/account history.
+	// Persist 'f' for an explicit opt-out; a missing value means it is not set yet.
+	// Legacy missing values cannot distinguish an opt-out from the upstream default.
+	if (localStorage.getItem('useSystemFont') == null) {
+		localStorage.setItem('useSystemFont', 't');
+	}
+
 	const fontSize = localStorage.getItem('fontSize');
 	if (fontSize) {
 		document.documentElement.classList.add('f-' + fontSize);
 	}
 
 	const useSystemFont = localStorage.getItem('useSystemFont');
-	if (useSystemFont) {
+	if (useSystemFont === 't') {
 		document.documentElement.classList.add('useSystemFont');
 	}
 

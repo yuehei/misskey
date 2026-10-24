@@ -17,10 +17,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<img v-for="(role, i) in note.user.badgeRoles" :key="i" v-tooltip="role.name" :class="$style.badgeRole" :src="role.iconUrl!"/>
 	</div>
 	<div :class="$style.info">
-		<div v-if="mock">
+		<div v-if="mock" :class="$style.secondaryText">
 			<MkTime :time="note.createdAt" colored/>
 		</div>
-		<MkA v-else :to="notePage(note)">
+		<MkA v-else :to="notePage(note)" :class="$style.secondaryText">
 			<MkTime :time="note.createdAt" colored/>
 		</MkA>
 		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
@@ -83,10 +83,17 @@ const mock = inject(DI.mock, false);
 }
 
 .username {
+	// [custom] Subdue account metadata while keeping theme-aware readable contrast.
+	color: color-mix(in srgb, var(--MI_THEME-fg) 90%, var(--MI_THEME-panel));
 	flex-shrink: 9999999;
 	margin: 0 .5em 0 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+// [custom] Inherit through time so upstream old-note warning colors still take priority.
+.secondaryText {
+	color: color-mix(in srgb, var(--MI_THEME-fg) 90%, var(--MI_THEME-panel));
 }
 
 .info {

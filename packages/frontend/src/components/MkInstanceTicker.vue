@@ -58,6 +58,8 @@ $height: 2ex;
 	display: flex;
 	align-items: center;
 	height: $height;
+	// [custom] Separate the visible server label from the note content.
+	margin-bottom: 2px;
 	border-radius: 4px 0 0 4px;
 	overflow: clip;
 	color: #fff;

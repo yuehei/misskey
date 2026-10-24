@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { Inject, Injectable } from '@nestjs/common';
 import ms from 'ms';
 import bcrypt from 'bcryptjs';
@@ -133,9 +135,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 				const link = `${this.config.url}/verify-email/${code}`;
 
-				this.emailService.sendEmail(ps.email, 'Email verification',
-					`To verify email, please click this link:<br><a href="${link}">${link}</a>`,
-					`To verify email, please click this link: ${link}`);
+				this.emailService.sendEmail(ps.email, ...customEmail.verifyEmail(link));
 			}
 
 			return iObj;

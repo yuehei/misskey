@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { Inject, Injectable } from '@nestjs/common';
 import * as Misskey from 'misskey-js';
 import { DI } from '@/di-symbols.js';
@@ -50,9 +52,7 @@ export class SigninService {
 
 			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
 			if (profile.email && profile.emailVerified) {
-				this.emailService.sendEmail(profile.email, 'New login / ログインがありました',
-					'There is a new login. If you do not recognize this login, update the security status of your account, including changing your password. / 新しいログインがありました。このログインに心当たりがない場合は、パスワードを変更するなど、アカウントのセキュリティ状態を更新してください。',
-					'There is a new login. If you do not recognize this login, update the security status of your account, including changing your password. / 新しいログインがありました。このログインに心当たりがない場合は、パスワードを変更するなど、アカウントのセキュリティ状態を更新してください。');
+				this.emailService.sendEmail(profile.email, customEmail.login.subject, customEmail.login.html, customEmail.login.text);
 			}
 		});
 

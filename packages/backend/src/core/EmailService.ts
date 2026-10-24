@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { createTransport } from 'nodemailer';
 import juice from 'juice';
 import sanitizeHtml from 'sanitize-html';
@@ -133,7 +135,7 @@ export class EmailService {
 				<div>${ sanitizedHtml }</div>
 			</article>
 			<footer>
-				<a href="${ escapeHtml(emailSettingUrl) }">${ 'Email setting' }</a>
+				<a href="${ escapeHtml(emailSettingUrl) }">${ customEmail.settings }</a>
 			</footer>
 		</main>
 		<nav>

@@ -18,6 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		>
 		</MkTab>
 	</template>
+	<!-- [custom] Match the main timeline's continuous, line-separated layout. -->
 	<MkNotesTimeline v-if="tab === 'featured'" :noGap="true" :paginator="featuredPaginator" :pullToRefresh="false" :class="$style.tl"/>
 	<MkNotesTimeline v-else :noGap="true" :paginator="notesPaginator" :pullToRefresh="false" :class="$style.tl"/>
 </MkStickyContainer>

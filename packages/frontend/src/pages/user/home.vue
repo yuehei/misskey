@@ -32,9 +32,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 									</button>
 								</div>
 							</div>
-							<span v-if="$i && $i.id != user.id && user.isFollowed" class="followed">{{ i18n.ts.followsYou }}</span>
+							<!-- [custom] Sharkey's relationship badges, using existing Misskey fields. -->
+							<ul v-if="$i && $i.id !== user.id" :class="$style.infoBadges">
+								<li v-if="user.isFollowed && user.isFollowing">{{ i18n.ts.mutualFollow }}</li>
+								<li v-else-if="user.isFollowing">{{ i18n.ts.following }}</li>
+								<li v-else-if="user.isFollowed">{{ i18n.ts.followsYou }}</li>
+								<li v-if="user.isBlocking">{{ i18n.ts.blocked }}</li>
+							</ul>
 							<div class="actions">
-								<button class="menu _button" @click="menu"><i class="ti ti-dots"></i></button>
+								<button class="menu _button" :aria-label="i18n.ts.more" @click="menu"><i class="ti ti-dots"></i></button>
 								<MkFollowButton v-if="$i?.id != user.id" v-model:user="user" :inline="true" :transparent="false" :full="true" class="koudoku"/>
 							</div>
 						</div>
@@ -790,5 +796,28 @@ onDeactivated(disposeBannerParallaxResizeObserver);
 .verifiedLink {
 	margin-left: 4px;
 	color: var(--MI_THEME-success);
+}
+
+// [custom] Adapted from Sharkey's profile relationship badges.
+.infoBadges {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	max-width: calc(100% - 180px);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+
+	> li {
+		padding: 4px 8px;
+		color: var(--MI_THEME-fg);
+		background: var(--MI_THEME-panel);
+		font-size: 0.75em;
+		border-radius: var(--MI-radius);
+		box-shadow: 0 2px 8px var(--MI_THEME-shadow);
+	}
 }
 </style>

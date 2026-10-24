@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 import type Logger from '@/logger.js';
@@ -37,6 +39,8 @@ export type ModeratorInactivityRemainingTime = {
 	asDays: number;
 };
 
+// [custom] Retain upstream templates for merge reference; active bilingual copy lives in custom-email.ts.
+/*
 function generateModeratorInactivityMail(remainingTime: ModeratorInactivityRemainingTime) {
 	const subject = 'Moderator Inactivity Warning / モデレーター不在の通知';
 
@@ -94,6 +98,7 @@ function generateInvitationOnlyChangedMail() {
 		text,
 	};
 }
+*/
 
 @Injectable()
 export class CheckModeratorsActivityProcessorService {
@@ -221,7 +226,7 @@ export class CheckModeratorsActivityProcessorService {
 			.findBy({ userId: In(moderators.map(it => it.id)) })
 			.then(it => new Map(it.map(it => [it.userId, it])));
 
-		const mail = generateModeratorInactivityMail(remainingTime);
+		const mail = customEmail.moderatorInactivity(remainingTime);
 		for (const moderator of moderators) {
 			const profile = moderatorProfiles.get(moderator.id);
 			if (profile && profile.email && profile.emailVerified) {
@@ -246,7 +251,7 @@ export class CheckModeratorsActivityProcessorService {
 			.findBy({ userId: In(moderators.map(it => it.id)) })
 			.then(it => new Map(it.map(it => [it.userId, it])));
 
-		const mail = generateInvitationOnlyChangedMail();
+		const mail = customEmail.invitationOnly(MODERATOR_INACTIVITY_LIMIT_DAYS);
 		for (const moderator of moderators) {
 			this.announcementService.create({
 				title: mail.subject,

@@ -680,6 +680,12 @@ const keymap = {
 }
 
 .footer {
+	// [custom] Sharkey-style compact action row, wrapping on small screens.
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	margin-top: 0.4em;
 	margin-bottom: -14px;
 }
 
@@ -689,7 +695,8 @@ const keymap = {
 	color: color-mix(in srgb, var(--MI_THEME-panel), var(--MI_THEME-fg) 70%); // opacityなど不透明度で表現するとレンダリングパフォーマンスに影響するので通常の色の混合で代用
 
 	&:not(:last-child) {
-		margin-right: 28px;
+		// [custom] Spacing is handled by the wrapping footer.
+		margin-right: 0;
 	}
 
 	&:hover {
@@ -772,20 +779,18 @@ const keymap = {
 
 @container (max-width: 400px) {
 	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 18px;
-			}
+		// [custom] Keep compact action spacing on narrow cards.
+		.footer {
+			column-gap: 8px;
 		}
 	}
 }
 
 @container (max-width: 350px) {
 	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 12px;
-			}
+		// [custom] Avoid combining legacy button margins with the flex gap.
+		.footer {
+			column-gap: 4px;
 		}
 	}
 
@@ -803,13 +808,14 @@ const keymap = {
 		height: 44px;
 	}
 
-	.root:not(.showActionsOnlyHover) {
-		.footerButton {
-			&:not(:last-child) {
-				margin-right: 8px;
-			}
-		}
-	}
+	// [custom] Keep the upstream rule for merge reference; gap already provides spacing.
+	// .root:not(.showActionsOnlyHover) {
+	// 	.footerButton {
+	// 		&:not(:last-child) {
+	// 			margin-right: 8px;
+	// 		}
+	// 	}
+	// }
 }
 
 @container (max-width: 250px) {

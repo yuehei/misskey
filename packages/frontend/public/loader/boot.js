@@ -102,6 +102,16 @@
 	}
 	//#endregion
 
+	// [custom] Seed existing accessibility options only for a fresh browser profile.
+	// Missing values on an existing profile can mean an explicit 14px / non-system choice.
+	if (localStorage.getItem('customTypographyInitialized') == null) {
+		if (localStorage.getItem('lastVersion') == null && localStorage.getItem('account') == null && localStorage.getItem('preferences') == null) {
+			if (localStorage.getItem('fontSize') == null) localStorage.setItem('fontSize', '1');
+			if (localStorage.getItem('useSystemFont') == null) localStorage.setItem('useSystemFont', 't');
+		}
+		localStorage.setItem('customTypographyInitialized', 'true');
+	}
+
 	const fontSize = localStorage.getItem('fontSize');
 	if (fontSize) {
 		document.documentElement.classList.add('f-' + fontSize);

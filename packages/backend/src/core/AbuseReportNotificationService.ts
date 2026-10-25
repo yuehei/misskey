@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { Inject, Injectable, type OnApplicationShutdown } from '@nestjs/common';
 import { Brackets, In, IsNull, Not } from 'typeorm';
 import * as Redis from 'ioredis';
@@ -116,7 +118,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 					// TODO: 送信処理はJobQueue化したい
 					return this.emailService.sendEmail(
 						mailAddress,
-						'New Abuse Report',
+						customEmail.abuseReportSubject,
 						sanitizeHtml(it.comment),
 						sanitizeHtml(it.comment),
 					);

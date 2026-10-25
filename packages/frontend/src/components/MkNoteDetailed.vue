@@ -73,7 +73,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<img v-for="(role, i) in appearNote.user.badgeRoles" :key="i" v-tooltip="role.name" :class="$style.noteHeaderBadgeRole" :src="role.iconUrl!"/>
 						</div>
 					</div>
-					<MkInstanceTicker v-if="showTicker" :host="appearNote.user.host" :instance="appearNote.user.instance"/>
+					<MkInstanceTicker v-if="showTicker" :class="$style.instanceTicker" :host="appearNote.user.host" :instance="appearNote.user.instance"/>
 				</div>
 			</header>
 			<div :class="$style.noteContent">
@@ -400,6 +400,11 @@ const keymap = {
 </script>
 
 <style lang="scss" module>
+// [custom] Keep server-label spacing in the caller rather than the shared component.
+.instanceTicker {
+	margin-bottom: 0.4em;
+}
+
 .root {
 	position: relative;
 	transition: box-shadow 0.1s ease;

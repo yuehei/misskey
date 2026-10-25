@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// [custom] Shared Chinese / English system email templates.
+import { customEmail } from '@/misc/custom-email.js';
 import { Inject, Injectable } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { IsNull, LessThanOrEqual } from 'typeorm';
@@ -211,9 +213,7 @@ export class SignupApiService {
 
 				const link = `${this.config.url}/signup-complete/${code}`;
 
-				this.emailService.sendEmail(emailAddress!, 'Signup',
-					`To complete signup, please click this link:<br><a href="${link}">${link}</a>`,
-					`To complete signup, please click this link: ${link}`);
+				this.emailService.sendEmail(emailAddress!, ...customEmail.signup(link));
 
 				if (ticket) {
 					await this.registrationTicketsRepository.update(ticket.id, {

@@ -615,7 +615,8 @@ function menuEdit() {
 
 	.itemText {
 		position: relative;
-		font-size: 0.9em;
+		// [custom] Use the base font size for expanded sidebar labels.
+		// font-size: 0.9em;
 	}
 
 	.subButtons {

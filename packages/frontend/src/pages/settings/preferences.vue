@@ -959,7 +959,7 @@ const menuStyle = prefer.model('menuStyle');
 const makeEveryTextElementsSelectable = prefer.model('makeEveryTextElementsSelectable');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize') as '1' | '2' | '3' | null);
-const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);
+const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') !== 'f');
 
 watch(lang, () => {
 	miLocalStorage.setItem('lang', lang.value as string);
@@ -974,11 +974,8 @@ watch(fontSize, () => {
 });
 
 watch(useSystemFont, () => {
-	if (useSystemFont.value) {
-		miLocalStorage.setItem('useSystemFont', 't');
-	} else {
-		miLocalStorage.removeItem('useSystemFont');
-	}
+	// [custom] Retain an explicit opt-out across reloads and account changes.
+	miLocalStorage.setItem('useSystemFont', useSystemFont.value ? 't' : 'f');
 });
 
 watch([

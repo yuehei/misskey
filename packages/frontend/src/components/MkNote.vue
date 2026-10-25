@@ -49,8 +49,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
 		<MkAvatar :class="[$style.avatar, prefer.s.useStickyIcons ? $style.useSticky : null]" :user="appearNote.user" :link="!mock" :preview="!mock"/>
 		<div :class="$style.main">
-			<MkNoteHeader :note="appearNote" :mini="true"/>
-			<MkInstanceTicker v-if="showTicker" :host="appearNote.user.host" :instance="appearNote.user.instance"/>
+			<MkNoteHeader :note="appearNote" :mini="true" :class="{ [$style.noteHeader]: !showTicker }"/>
+			<MkInstanceTicker v-if="showTicker" :class="$style.instanceTicker" :host="appearNote.user.host" :instance="appearNote.user.instance"/>
 			<div style="container-type: inline-size;">
 				<p v-if="appearNote.cw != null" :class="$style.cw">
 					<Mfm
@@ -77,6 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 							:enableEmojiMenu="true"
 							:enableEmojiMenuReaction="true"
 							class="_selectable"
+							:class="$style.noteBody"
 						/>
 						<div v-if="translating || translation" :class="$style.translation">
 							<MkLoading v-if="translating" mini/>
@@ -377,6 +378,11 @@ const keymap = {
 </script>
 
 <style lang="scss" module>
+// [custom] Keep server-label spacing in the caller rather than the shared component.
+.instanceTicker {
+	margin-bottom: 0.4em;
+}
+
 .root {
 	position: relative;
 	font-size: 1.05em;
@@ -412,6 +418,13 @@ const keymap = {
 
 	&:hover > .article > .main > .footer > .footerButton {
 		color: var(--MI_THEME-fg);
+
+		// [custom] Keep note-wide highlighting, and accent only the hovered, enabled action.
+		@media (hover: hover) {
+			&:not(:disabled):hover {
+				color: var(--MI_THEME-accent);
+			}
+		}
 	}
 
 	&.showActionsOnlyHover {
@@ -550,10 +563,16 @@ const keymap = {
 	}
 }
 
+// [custom] Without a server label, separate the author row from the content; otherwise the label supplies the gap.
+.noteHeader {
+	margin-bottom: 0.4em;
+}
+
 .article {
 	position: relative;
 	display: flex;
-	padding: 28px 32px;
+	// [custom] Reduce outer whitespace while keeping the original horizontal padding.
+	padding: 18px 32px;
 }
 
 .colorBar {
@@ -643,6 +662,11 @@ const keymap = {
 	overflow-wrap: break-word;
 }
 
+// [custom] Use consistent leading for note prose in every language, without changing author metadata.
+.noteBody {
+	line-height: 1.4;
+}
+
 .replyIcon {
 	color: var(--MI_THEME-accent);
 	margin-right: 0.5em;
@@ -712,7 +736,8 @@ const keymap = {
 	}
 
 	.article {
-		padding: 24px 26px;
+		// [custom] Keep tablet spacing consistent with the desktop timeline.
+		padding: 18px 26px;
 	}
 
 	.avatar {
@@ -731,7 +756,8 @@ const keymap = {
 	}
 
 	.article {
-		padding: 20px 22px;
+		// [custom] The <=480px mobile rule below retains its original 14px padding.
+		padding: 18px 22px;
 	}
 
 	.footer {
